@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AddCompanyForm.css"; // Importing the CSS file for styling
 
-const AddCompanyForm = ({ onSubmit }) => {
+const AddCompanyForm = ({ onSubmit, editingCompany }) => {
   const [companyData, setCompanyData] = useState({
     name: "",
     location: "",
@@ -13,6 +13,24 @@ const AddCompanyForm = ({ onSubmit }) => {
     nextCommunicationDate: "",
   });
 
+  // Update form data when editingCompany changes
+  useEffect(() => {
+    if (editingCompany) {
+      setCompanyData({
+        name: editingCompany.name || "",
+        location: editingCompany.location || "",
+        linkedIn: editingCompany.linkedIn || "",
+        emails: editingCompany.emails ? editingCompany.emails.join(", ") : "",
+        phoneNumbers: editingCompany.phoneNumbers
+          ? editingCompany.phoneNumbers.join(", ")
+          : "",
+        comments: editingCompany.comments || "",
+        nextCommunicationType: editingCompany.nextCommunication?.type || "",
+        nextCommunicationDate: editingCompany.nextCommunication?.date || "",
+      });
+    }
+  }, [editingCompany]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCompanyData({
@@ -23,7 +41,25 @@ const AddCompanyForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(companyData); // Pass data back to parent component
+
+    // Transform emails and phoneNumbers into arrays
+    const updatedCompanyData = {
+      ...companyData,
+      emails: companyData.emails.split(",").map((email) => email.trim()),
+      phoneNumbers: companyData.phoneNumbers
+        .split(",")
+        .map((phone) => phone.trim()),
+      nextCommunication: {
+        type: companyData.nextCommunicationType,
+        date: companyData.nextCommunicationDate,
+      },
+    };
+
+    onSubmit({ ...editingCompany, ...updatedCompanyData }); // Pass data back to parent
+    resetForm();
+  };
+
+  const resetForm = () => {
     setCompanyData({
       name: "",
       location: "",
@@ -38,7 +74,7 @@ const AddCompanyForm = ({ onSubmit }) => {
 
   return (
     <div className="add-company-form">
-      <h2>Add New Company</h2>
+      <h2>{editingCompany ? "Edit Company" : "Add New Company"}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Company Name</label>
@@ -71,7 +107,7 @@ const AddCompanyForm = ({ onSubmit }) => {
           />
         </div>
         <div className="form-group">
-          <label>Emails</label>
+          <label>Emails (comma-separated)</label>
           <input
             type="email"
             name="emails"
@@ -81,7 +117,7 @@ const AddCompanyForm = ({ onSubmit }) => {
           />
         </div>
         <div className="form-group">
-          <label>Phone Numbers</label>
+          <label>Phone Numbers (comma-separated)</label>
           <input
             type="tel"
             name="phoneNumbers"
@@ -117,7 +153,7 @@ const AddCompanyForm = ({ onSubmit }) => {
           />
         </div>
         <button type="submit" className="submit-btn">
-          Add Company
+          {editingCompany ? "Save Changes" : "Add Company"}
         </button>
       </form>
     </div>

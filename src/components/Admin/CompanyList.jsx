@@ -1,4 +1,3 @@
-// components/Admin/CompanyList.jsx
 import React from "react";
 import "./CompanyList.css"; // Import the CSS for styling
 
@@ -25,10 +24,25 @@ const CompanyList = ({ companies, onEdit, onDelete }) => {
                 </a>
               </p>
               <p>
-                <strong>Emails:</strong> {company.emails.join(", ")}
+                <strong>Emails:</strong>{" "}
+                {company.emails && company.emails.length > 0
+                  ? company.emails.join(", ")
+                  : "No emails available"}
               </p>
               <p>
-                <strong>Phone:</strong> {company.phoneNumbers.join(", ")}
+                <strong>Phone:</strong>{" "}
+                {company.phoneNumbers && company.phoneNumbers.length > 0
+                  ? company.phoneNumbers.join(", ")
+                  : "No phone numbers available"}
+              </p>
+              <p>
+                <strong>Comments:</strong> {company.comments || "No comments"}
+              </p>
+              <p>
+                <strong>Next Communication:</strong>{" "}
+                {company.nextCommunication
+                  ? `${company.nextCommunication.type} on ${company.nextCommunication.date}`
+                  : "Not scheduled"}
               </p>
             </div>
             <div className="company-actions">

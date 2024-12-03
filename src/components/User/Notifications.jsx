@@ -1,4 +1,3 @@
-// components/User/Notifications.jsx
 import React from "react";
 import "./Notifications.css"; // Importing custom CSS file for notifications
 
@@ -9,7 +8,9 @@ const Notifications = ({ overdue, dueToday }) => {
       {overdue.length > 0 ? (
         overdue.map((item) => (
           <div className="notification-item overdue" key={item.id}>
-            <strong>{item.companyName}</strong>: {item.type} overdue!
+            <strong>{item.name}</strong>: {item.nextCommunication.type} was
+            overdue on{" "}
+            {new Date(item.nextCommunication.date).toLocaleDateString()}.
           </div>
         ))
       ) : (
@@ -20,7 +21,8 @@ const Notifications = ({ overdue, dueToday }) => {
       {dueToday.length > 0 ? (
         dueToday.map((item) => (
           <div className="notification-item due-today" key={item.id}>
-            <strong>{item.companyName}</strong>: {item.type} due today!
+            <strong>{item.name}</strong>: {item.nextCommunication.type} is due
+            today!
           </div>
         ))
       ) : (
